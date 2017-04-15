@@ -3,36 +3,43 @@
 #include <aws/core/Aws.h>
 #include <iostream>
 
-int main() {
-
-    Aws::SDKOptions options;
-   options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Info;
-    Aws::InitAPI(options);
-
-    //use the sdk
-
 Aws::CloudWatch::CloudWatchClient cw;
 
+void init_aws_sdk() {
+	Aws::SDKOptions options;
+	options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Info;
+	Aws::InitAPI(options);
+}
+
+int put_metric_cw(char *nameSpace, char *metricName, char *dimensionName, char *dimensionValue, int value, char *errMsg) {
+
 Aws::CloudWatch::Model::Dimension dimension;
-dimension.SetName("UNIQUE_PAGES");
-dimension.SetValue("URLS");
+dimension.SetName(dimensionName);
+dimension.SetValue(dimensionValue);
 
 Aws::CloudWatch::Model::MetricDatum datum;
-datum.SetMetricName("PAGES_VISITED");
+datum.SetMetricName(metricName);
 datum.SetUnit(Aws::CloudWatch::Model::StandardUnit::None);
-datum.SetValue(10);
+datum.SetValue(value);
 datum.AddDimensions(dimension);
 
 Aws::CloudWatch::Model::PutMetricDataRequest request;
-request.SetNamespace("SITE/TRAFFIC");
+request.SetNamespace(nameSpace);
 request.AddMetricData(datum);
 
 auto outcome = cw.PutMetricData(request);
 if (!outcome.IsSuccess()) {
-    std::cout << "Failed to put sample metric data:" <<
+    	std::cout << "Failed to put sample metric data:" <<
         outcome.GetError().GetMessage() << std::endl;
+	if (errMsg)
+		errMsg = outcome.GetError().GetMessage();
+	return 1;
 } else {
-    std::cout << "Successfully put sample metric data" << std::endl;
+	std::cout << "Successfully put sample metric data" << std::endl;
+	return 0;
 }
+}
+
+void shutdown_aws_sdk() {
     Aws::ShutdownAPI(options);
 }
