@@ -3,7 +3,6 @@
 #include <aws/core/Aws.h>
 #include <iostream>
 
-Aws::CloudWatch::CloudWatchClient cw;
 Aws::SDKOptions options;
 
 void init_aws_sdk() {
@@ -12,6 +11,7 @@ void init_aws_sdk() {
 }
 
 int put_metric_cw(char *nameSpace, char *metricName, char *dimensionName, char *dimensionValue, int value, const char *errMsg) {
+	Aws::CloudWatch::CloudWatchClient cw;
 
 	Aws::CloudWatch::Model::Dimension dimension;
 	dimension.SetName(dimensionName);

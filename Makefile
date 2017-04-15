@@ -13,7 +13,7 @@ EXECUTABLE=sweet.so
 all: $(SOURCES) $(EXECUTABLE)
     
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) -shared -lpthread -fPIC $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) -shared -fPIC  -lpthread $(LDFLAGS) $(OBJECTS) -o $@
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@

@@ -30,15 +30,15 @@ void *__XX_collect_metrics_thread(void *x) {
 static void* (*__XX_real_malloc)(size_t) = NULL;
 static void __XX_wrapper(void);
 
-void *__XX_fake_malloc(size_t size) {
+void *malloc(size_t size) {
     if(__XX_real_malloc == NULL) {
         __XX_wrapper();
     }
-
+	printf("salve");
     return __XX_real_malloc(size);
 }
 
-static void* (*malloc)(size_t) = __XX_fake_malloc;
+//static void* (*malloc)(size_t) = __XX_fake_malloc;
 
 static void __XX_wrapper(void) {
 	__XX_real_malloc = (void* (*)(size_t)) dlsym(RTLD_NEXT, "malloc");
@@ -49,6 +49,6 @@ static void __XX_wrapper(void) {
 	if(pthread_create(&_thread, NULL, __XX_collect_metrics_thread, NULL)) {
 		fprintf(stderr, "Error creating thread\n");
 	}
- 	malloc = __XX_real_malloc; 
+// 	malloc = __XX_real_malloc; 
 }
 
