@@ -7,13 +7,13 @@ else
 LDFLAGS=-lssl -lcurl -lcrypto 
 OBJECTS=$(SOURCES:.cpp=.o) third-party/aws-sdk-cpp/aws-cpp-sdk-monitoring/libaws-cpp-sdk-monitoring.a third-party/aws-sdk-cpp/aws-cpp-sdk-core/libaws-cpp-sdk-core.a
 endif
-SOURCES=put_metric.cpp
-EXECUTABLE=put_metric
+SOURCES=put_metric.cpp sweet.c
+EXECUTABLE=sweet.so
 
 all: $(SOURCES) $(EXECUTABLE)
     
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) -shared -lpthread -fPIC $(LDFLAGS) $(OBJECTS) -o $@
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@

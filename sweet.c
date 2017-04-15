@@ -1,11 +1,10 @@
-#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <dlfcn.h>
 
 #include <pthread.h>
-#include <linux/types.h>
 #include <stdint.h>
+#include <unistd.h>
 
 typedef int32_t                     ngx_atomic_int_t;
 typedef uint32_t                    ngx_atomic_uint_t;
@@ -26,7 +25,6 @@ void *__XX_collect_metrics_thread(void *x) {
 		}	
 		sleep(10);
 	}
-	return;
 }
 
 static void* (*__XX_real_malloc)(size_t) = NULL;
@@ -43,7 +41,7 @@ void *__XX_fake_malloc(size_t size) {
 static void* (*malloc)(size_t) = __XX_fake_malloc;
 
 static void __XX_wrapper(void) {
-	__XX_real_malloc = dlsym(RTLD_NEXT, "malloc");
+	__XX_real_malloc = (void* (*)(size_t)) dlsym(RTLD_NEXT, "malloc");
 	if (NULL == __XX_real_malloc) {
 		fprintf(stderr, "Error in `dlsym`: %s\n", dlerror());
 	}

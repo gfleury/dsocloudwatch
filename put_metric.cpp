@@ -4,14 +4,14 @@
 #include <iostream>
 
 Aws::CloudWatch::CloudWatchClient cw;
+Aws::SDKOptions options;
 
 void init_aws_sdk() {
-	Aws::SDKOptions options;
 	options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Info;
 	Aws::InitAPI(options);
 }
 
-int put_metric_cw(char *nameSpace, char *metricName, char *dimensionName, char *dimensionValue, int value, char *errMsg) {
+int put_metric_cw(char *nameSpace, char *metricName, char *dimensionName, char *dimensionValue, int value, const char *errMsg) {
 
 Aws::CloudWatch::Model::Dimension dimension;
 dimension.SetName(dimensionName);
@@ -32,7 +32,7 @@ if (!outcome.IsSuccess()) {
     	std::cout << "Failed to put sample metric data:" <<
         outcome.GetError().GetMessage() << std::endl;
 	if (errMsg)
-		errMsg = outcome.GetError().GetMessage();
+		errMsg = outcome.GetError().GetMessage().c_str();
 	return 1;
 } else {
 	std::cout << "Successfully put sample metric data" << std::endl;
